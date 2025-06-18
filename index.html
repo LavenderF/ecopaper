@@ -125,10 +125,15 @@
     div.onclick = () => {
       if (!gameRunning) return;
       score += itemType.score;
-      if(score < 0) score = 0;
+      if (score < 0) score = 0;
       scoreEl.textContent = score;
       gameArea.removeChild(div);
       showTip(itemType);
+
+      // ✅ 分数变为 0 且是因为点击扣分项目 → 游戏立即结束
+      if (score === 0 && itemType.score < 0) {
+        endGame(true); // 传入标志表示是“失败终止”
+      }
     };
 
     gameArea.appendChild(div);
@@ -178,17 +183,19 @@
     countdownInterval = setInterval(() => {
       timeLeft--;
       timerEl.textContent = timeLeft;
-      if (timeLeft <= 0) endGame();
+      if (timeLeft <= 0) endGame(false);
     }, 1000);
   }
 
-  function endGame() {
+  function endGame(early = false) {
     gameRunning = false;
     clearInterval(spawnInterval);
     clearInterval(countdownInterval);
     startBtn.disabled = false;
     gameArea.innerHTML = '';
-    resultEl.textContent = `游戏结束！你节约了 ${score} 分，继续加油哦！🚽🌱`;
+    resultEl.textContent = early
+      ? `游戏结束：你已经没有分数啦！注意节约哦！🧻❌`
+      : `游戏结束！你节约了 ${score} 分，继续加油哦！🚽🌱`;
   }
 
   startBtn.addEventListener('click', startGame);
