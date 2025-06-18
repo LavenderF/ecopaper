@@ -7,23 +7,24 @@
 <style>
   body {
     font-family: "微软雅黑", sans-serif;
-    background: linear-gradient(180deg, #a8d5a2 0%, #76b852 100%);
+    background: linear-gradient(180deg, #b3f0d1 0%, #a6d8ff 100%);
     margin: 0; padding: 0;
     display: flex; flex-direction: column; align-items: center;
     user-select: none;
-    color: #2e4d20;
+    color: #1a3a4a;
   }
   h1 {
     margin: 20px 0 10px;
-    color: #3a6329;
+    color: #2a577f;
   }
   #game-area {
     position: relative;
     width: 360px; height: 500px;
-    background: #d0e8c0;
-    border: 3px solid #a3c293;
+    background: #d3f0f9;
+    border: 3px solid #7dc6e8;
     border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 0 15px rgba(124, 198, 232, 0.5);
   }
   .item {
     position: absolute;
@@ -38,7 +39,7 @@
   #info {
     margin-top: 15px;
     font-size: 20px;
-    color: #335522;
+    color: #1a3a4a;
     display: flex; justify-content: space-around;
     width: 360px;
   }
@@ -46,21 +47,27 @@
     margin-top: 15px;
     padding: 10px 30px;
     font-size: 18px;
-    background-color: #8bbf71;
+    background-color: #82d1a5;
     border: none;
     border-radius: 6px;
     color: white;
     cursor: pointer;
     user-select: none;
+    box-shadow: 0 4px 8px rgba(130, 209, 165, 0.6);
+    transition: background-color 0.3s ease;
+  }
+  #start-btn:hover:not(:disabled) {
+    background-color: #6cbf90;
   }
   #start-btn:disabled {
-    background-color: #b3d39e;
+    background-color: #b3e4c7;
     cursor: default;
+    box-shadow: none;
   }
   #result {
     margin-top: 20px;
     font-size: 22px;
-    color: #2d4a14;
+    color: #1a3a4a;
     min-height: 28px;
   }
 </style>
@@ -139,12 +146,13 @@
     tip.style.left = '50%';
     tip.style.top = '50%';
     tip.style.transform = 'translate(-50%, -50%)';
-    tip.style.background = item.score > 0 ? '#81c784' : '#e57373';
-    tip.style.color = '#fff';
+    tip.style.background = item.score > 0 ? '#6ade8f' : '#f28b82';
+    tip.style.color = '#1a3a4a';
     tip.style.padding = '8px 16px';
     tip.style.borderRadius = '10px';
     tip.style.fontSize = '18px';
     tip.style.userSelect = 'none';
+    tip.style.boxShadow = '0 0 8px rgba(0,0,0,0.15)';
     tip.textContent = item.score > 0 ? `+${item.score}分，合理节约！` : `${item.name}，扣除15分！`;
 
     document.body.appendChild(tip);
