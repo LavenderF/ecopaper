@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>卫生纸节约大作战小游戏</title>
+<style>
+  body {
+    font-family: "微软雅黑", sans-serif;
+    background: linear-gradient(180deg, #a8d5a2 0%, #76b852 100%);
+    margin: 0; padding: 0;
+    display: flex; flex-direction: column; align-items: center;
+    user-select: none;
+    color: #2e4d20;
+  }
+  h1 {
+    margin: 20px 0 10px;
+    color: #3a6329;
+  }
+  #game-area {
+    position: relative;
+    width: 360px; height: 500px;
+    background: #d0e8c0;
+    border: 3px solid #a3c293;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .item {
+    position: absolute;
+    font-size: 48px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s ease;
+  }
+  .item:active {
+    transform: scale(1.2);
+  }
+  #info {
+    margin-top: 15px;
+    font-size: 20px;
+    color: #335522;
+    display: flex; justify-content: space-around;
+    width: 360px;
+  }
+  #start-btn {
+    margin-top: 15px;
+    padding: 10px 30px;
+    font-size: 18px;
+    background-color: #8bbf71;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+  }
+  #start-btn:disabled {
+    background-color: #b3d39e;
+    cursor: default;
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 22px;
+    color: #2d4a14;
+    min-height: 28px;
+  }
+</style>
+</head>
+<body>
+
+<h1>卫生纸节约大作战</h1>
+<div id="game-area"></div>
+
+<div id="info">
+  <div>时间: <span id="timer">60</span>s</div>
+  <div>得分: <span id="score">0</span></div>
+</div>
+
+<button id="start-btn">开始游戏</button>
+<div id="result"></div>
+
+<script>
+  const gameArea = document.getElementById('game-area');
+  const timerEl = document.getElementById('timer');
+  const scoreEl = document.getElementById('score');
+  const startBtn = document.getElementById('start-btn');
+  const resultEl = document.getElementById('result');
+
+  const gameWidth = 360;
+  const gameHeight = 500;
+  let spawnInterval, countdownInterval;
+  let score = 0;
+  let timeLeft = 60;
+  let gameRunning = false;
+
+  const items = [
+    { emoji: "🧻", score: 10, name: "合理用量卫生纸" },
+    { emoji: "🗑️", score: -15, name: "浪费纸团怪兽" }
+  ];
+
+  function randomPosition() {
+    const x = Math.random() * (gameWidth - 50);
+    const y = Math.random() * (gameHeight - 50);
+    return { x, y };
+  }
+
+  function createItem() {
+    if (!gameRunning) return;
+    const itemType = Math.random() < 0.6 ? items[0] : items[1];
+
+    const div = document.createElement('div');
+    div.classList.add('item');
+    div.textContent = itemType.emoji;
+
+    const pos = randomPosition();
+    div.style.left = pos.x + 'px';
+    div.style.top = pos.y + 'px';
+
+    div.onclick = () => {
+      if (!gameRunning) return;
+      score += itemType.score;
+      if(score < 0) score = 0;
+      scoreEl.textContent = score;
+      gameArea.removeChild(div);
+      showTip(itemType);
+    };
+
+    gameArea.appendChild(div);
+
+    setTimeout(() => {
+      if (gameArea.contains(div)) {
+        gameArea.removeChild(div);
+      }
+    }, 5000);
+  }
+
+  function showTip(item) {
+    const tip = document.createElement('div');
+    tip.style.position = 'absolute';
+    tip.style.left = '50%';
+    tip.style.top = '50%';
+    tip.style.transform = 'translate(-50%, -50%)';
+    tip.style.background = item.score > 0 ? '#81c784' : '#e57373';
+    tip.style.color = '#fff';
+    tip.style.padding = '8px 16px';
+    tip.style.borderRadius = '10px';
+    tip.style.fontSize = '18px';
+    tip.style.userSelect = 'none';
+    tip.textContent = item.score > 0 ? `+${item.score}分，合理节约！` : `${item.name}，扣除15分！`;
+
+    document.body.appendChild(tip);
+
+    setTimeout(() => {
+      document.body.removeChild(tip);
+    }, 1200);
+  }
+
+  function startGame() {
+    if (gameRunning) return;
+    gameRunning = true;
+    score = 0;
+    timeLeft = 60;
+    scoreEl.textContent = score;
+    timerEl.textContent = timeLeft;
+    resultEl.textContent = '';
+    startBtn.disabled = true;
+    gameArea.innerHTML = '';
+
+    spawnInterval = setInterval(createItem, 800);
+
+    countdownInterval = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = timeLeft;
+      if (timeLeft <= 0) endGame();
+    }, 1000);
+  }
+
+  function endGame() {
+    gameRunning = false;
+    clearInterval(spawnInterval);
+    clearInterval(countdownInterval);
+    startBtn.disabled = false;
+    gameArea.innerHTML = '';
+    resultEl.textContent = `游戏结束！你节约了 ${score} 分，继续加油哦！🚽🌱`;
+  }
+
+  startBtn.addEventListener('click', startGame);
+</script>
+
+</body>
+</html>
